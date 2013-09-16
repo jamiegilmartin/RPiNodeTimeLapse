@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ROLL = $(cat /home/pi/sketchbook/timeLapse/series)
-SAVEDIR = /home/pi/sketchbook/timeLapse/stills
+SAVEDIR = /home/pi/sketchbook/timeLapse/images
 
 while [ true ]; do
 
