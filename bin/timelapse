@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+console.log("hi mars")
+
+var fs = require('fs');
+var argv = process.argv.slice(2);
+var help = "hi, copied from http://www.netmagazine.com/tutorials/build-command-line-app-nodejs";
+var tasks = {};
+tasks.help = function(){
+	console.log(help);
+}
+tasks.checkDir = function(dir){
+	fs.readdir(dir, function (err, list) {
+		if (err) return action(err);
+		// For every file in the list
+		list.forEach(function(file) {
+			// Full path of that file
+			var path = dir + "/" + file;
+			
+			console.log(path)
+		});
+	});
+}
+if(argv[0] === "--help" || argv[0] === "-h"){
+	tasks.help();
+}else{
+	tasks.checkDir(argv[0]);
+}
+
