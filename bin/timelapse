@@ -1,10 +1,14 @@
 #!/usr/bin/env node
-console.log("hi mars")
+console.log("hi mars");
 
+
+var terminal = require('child_process').spawn('bash');
 var fs = require('fs');
+var date = new Date();
 var argv = process.argv.slice(2);
 var help = "hi, copied from http://www.netmagazine.com/tutorials/build-command-line-app-nodejs";
 var tasks = {};
+
 tasks.help = function(){
 	console.log(help);
 }
@@ -25,4 +29,20 @@ if(argv[0] === "--help" || argv[0] === "-h"){
 }else{
 	tasks.checkDir(argv[0]);
 }
+
+
+
+terminal.stdout.on('data', function (data) {
+    console.log('stdout: ' + data);
+});
+
+terminal.on('exit', function (code) {
+        console.log('child process exited with code ' + code);
+});
+
+setTimeout(function() {	
+    console.log('Sending stdin to terminal',date);
+    terminal.stdin.write('echo "Hello $USER"');
+    terminal.stdin.end();
+}, 1000);
 
