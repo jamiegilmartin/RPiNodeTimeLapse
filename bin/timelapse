@@ -40,7 +40,7 @@ var TimeLapse = {
 			console.log('take pic',terminal.pid,this.increment,command)
 
 			//command
-			terminal.stdin.write(command);
+			terminal.stdin.write(command+'\n');
 		}else{
 			console.log('reached the max');
 			clearInterval(this.timer);//process keeps running if you don't clear
