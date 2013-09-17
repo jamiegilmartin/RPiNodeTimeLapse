@@ -8,9 +8,9 @@ var TimeLapse = {
 	init : function(){
 		var self = this;
 		this.directory = 'images';
-		this.delay = 10000;
+		this.delay = 20000;
 		this.increment = 0;
-		this.max = 100;
+		this.max = 1000;
 		this.timer = null;
 
 
@@ -23,7 +23,7 @@ var TimeLapse = {
 			//if you want to see what's in a dir
 			this.readDir( argv[0] );
 		}else{
-			
+			//TODO add pic args
 			this.timer = setInterval(function(){
 				self.takePic();
 			},this.delay);
