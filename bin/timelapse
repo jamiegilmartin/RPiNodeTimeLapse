@@ -1,49 +1,90 @@
 #!/usr/bin/env node
-console.log("hi mars");
-
-
 var terminal = require('child_process').spawn('bash');
 var fs = require('fs');
-var date = new Date();
 var argv = process.argv.slice(2);
-var help = "hi, copied from http://www.netmagazine.com/tutorials/build-command-line-app-nodejs";
-var tasks = {};
 
-tasks.help = function(){
-	console.log(help);
-}
-tasks.checkDir = function(dir){
-	fs.readdir(dir, function (err, list) {
-		if (err) return action(err);
-		// For every file in the list
-		list.forEach(function(file) {
-			// Full path of that file
-			var path = dir + "/" + file;
+
+var TimeLapse = {
+	init : function(){
+		var self = this;
+		this.directory = 'images';
+		this.delay = 1000;
+		this.increment = 0;
+		this.max = 10;
+		this.timer = null;
+
+
+		
+
+		//parse args
+		if(argv[0] === "--help" || argv[0] === "-h"){
+			this.help();
+		}else if( argv[0] ){
+			//if you want to see what's in a dir
+			this.readDir( argv[0] );
+		}else{
 			
-			console.log(path)
+			this.timer = setInterval(function(){
+				self.takePic();
+			},this.delay);
+		}
+
+
+	},
+	takePic : function(){
+		var date = new Date(),
+			fileName = "timeLapse-img-"+(date.getMonth()+1)+"-"+date.getDate()+"-"+date.getFullYear()+"_"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds()+".jpg",
+			command = "raspistill -o "+this.directory+"/"+fileName;
+		
+		if(this.increment < this.max){
+			console.log('take pic',terminal.pid,this.increment,command)
+
+			//command
+			terminal.stdin.write(command);
+		}else{
+			console.log('reached the max');
+			clearInterval(this.timer);//process keeps running if you don't clear
+			terminal.stdin.end();
+		}
+
+		this.increment += 1;
+		
+	},
+	readDir : function( dir ){
+		fs.readdir(dir, function (err, list) {
+			if (err) return action(err);
+			// For every file in the list
+			list.forEach(function(file) {
+				// Full path of that file
+				var path = dir + "/" + file;
+				
+				console.log(path)
+			});
 		});
-	});
-}
-if(argv[0] === "--help" || argv[0] === "-h"){
-	tasks.help();
-}else{
-	tasks.checkDir(argv[0]);
-}
+	},
+	help : function(){
+		var help = "hi, I copied this from http://www.netmagazine.com/tutorials/build-command-line-app-nodejs";//TODO
+		console.log(help);
+	}
+};
 
+//initialize
+TimeLapse.init();
 
-
+//terminal I/O
 terminal.stdout.on('data', function (data) {
     console.log('stdout: ' + data);
 });
 
 terminal.on('exit', function (code) {
-        console.log('child process exited with code ' + code);
+    console.log('child process exited with code ' + code);
 });
 
+/*
 setTimeout(function() {	
-    console.log('Sending stdin to terminal',date);
-   // terminal.stdin.write('echo "Hello $USER"');
-   	terminal.stdin.write('raspistill -o image.jpg');
-	 terminal.stdin.end();
+    console.log('Sending stdin to terminal');
+   	terminal.stdin.write('echo "Hello $USER"');
+   	//terminal.stdin.write('raspistill -o image.jpg');
+	terminal.stdin.end();
 }, 1000);
-
+*/
