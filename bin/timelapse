@@ -42,7 +42,8 @@ terminal.on('exit', function (code) {
 
 setTimeout(function() {	
     console.log('Sending stdin to terminal',date);
-    terminal.stdin.write('echo "Hello $USER"');
-    terminal.stdin.end();
+   // terminal.stdin.write('echo "Hello $USER"');
+   	terminal.stdin.write('raspistill -o image.jpg');
+	 terminal.stdin.end();
 }, 1000);
 
