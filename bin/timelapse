@@ -12,8 +12,10 @@ var TimeLapse = {
 		this.directory = this.output + '/stills';
 		this.delay = 5000;
 		this.increment = 0;
-		this.maxPics = 1000;
-		this.timer = null;
+		this.maxPics = 1000; //TODO: command
+		this.timer = null; 
+
+		//TODO: command for amount of time, new Date thing
 
 		this.parseArgv();
 	},
