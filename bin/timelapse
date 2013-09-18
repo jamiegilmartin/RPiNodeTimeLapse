@@ -67,7 +67,7 @@ var TimeLapse = {
 	},
 	takePic : function(){
 		var date = new Date(),
-			fileName = "timeLapse-img-"+(date.getMonth()+1)+"-"+date.getDate()+"-"+date.getFullYear()+"_"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds()+".jpg",
+			fileName = "timeLapse-img_"+this.increment +"_date-"+(date.getMonth()+1)+"-"+date.getDate()+"-"+date.getFullYear()+"_"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds()+".jpg",
 			command = "raspistill -o "+this.directory+"/"+fileName;
 		
 		if(this.increment < this.maxPics){
