@@ -57,7 +57,7 @@ var TimeLapse = {
 		console.log('set', param, this[param]);
 
 		//start
-		//this.start();
+		this.start();
 	},
 	start : function(){
 		var self = this;
@@ -121,6 +121,12 @@ terminal.on('exit', function (code) {
     console.log('child process exited with code ' + code);
 });
 
+/*
+//on exit
+process.on('exit', function() {
+  console.log('About to exit.');
+});
+*/
 /*
 setTimeout(function() {	
     console.log('Sending stdin to terminal');
