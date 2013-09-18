@@ -23,11 +23,14 @@ var TimeLapse = {
 			//if you want to see what's in a dir
 			this.readDir( argv[0] );
 		}else{
-			//TODO add pic args
+			//TODO add pic args like delay etc,
 			this.timer = setInterval(function(){
 				self.takePic();
 			},this.delay);
 		}
+
+		//TODO: upload to Dropbox
+		///usr/local/bin/dropbox/dropbox_uploader.sh upload images /secocondTL
 
 
 	},
@@ -41,6 +44,7 @@ var TimeLapse = {
 
 			//command
 			terminal.stdin.write(command+'\n');
+
 		}else{
 			console.log('reached the max');
 			clearInterval(this.timer);//process keeps running if you don't clear
