@@ -4,6 +4,9 @@ usr/local/bin/dropbox/dropbox_uploader.sh upload images /newFolder
 
 ~/sketchbook/timeLapse/old_img 
 
+ls -t >  stills.txt
+
+
 dbupload.sh
 
 
