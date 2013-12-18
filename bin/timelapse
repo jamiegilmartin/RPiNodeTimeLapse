@@ -22,7 +22,7 @@ var TimeLapse = {
 		this.directory = this.output + '/stills';
 		this.delay = 5000;
 		this.increment = 0;
-		this.maxPics = 1000; //TODO: command
+		this.maxPics = 1000;
 		this.timer = null; 
 
 		//TODO: command for amount of time, new Date thing
@@ -37,10 +37,12 @@ var TimeLapse = {
 		}else{
 			//loop through args and parse
 			for(var i=0;i<argv.length;i++){
+				
 				//set delay
 				if(argv[i] === '-delay'){
 					this.setOptions('delay',argv[i+1]);
 				}
+				
 				//set directory
 				if(argv[i] === '-dir'){
 					var dir = self.output +'/' + argv[i+1]
@@ -57,6 +59,11 @@ var TimeLapse = {
 					  	});
 					  }
 					});
+				}
+				
+				//set maxPics
+				if(argv[i] === '-max_number_of_pics'){
+					this.setOptions('maxPics',argv[i+1]);
 				}
 			}
 		}
@@ -97,7 +104,7 @@ var TimeLapse = {
 		
 	},
 	//if you want to see what's in a dir
-	//@deprecated ?
+	//@deprecated ? not used yet
 	readDir : function( dir ){
 		function action(ac){
 			console.log(ac);
@@ -117,7 +124,8 @@ var TimeLapse = {
 		var help = "";
 		help += "commands:\n";
 		help += "-delay (sets delay, so type -delay 5000 or something)\n";
-		help += "-dir (sets directory, so type dir_name to create place where you want your stills\n";
+		help += "-dir (sets directory, so type dir_name to create place where you want your stills)\n";
+		help += "-max_number_of_pics (sets maximum number of pics, so type max_number_of_pics to set a limit otherwise it's 1000)\n";
 		console.log(help);
 		
 		terminal.kill();
