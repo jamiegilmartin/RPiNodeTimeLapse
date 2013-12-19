@@ -17,7 +17,6 @@ var argv = process.argv.slice(2);
 var TimeLapse = {
 	init : function(){
 		var self = this;
-		this.canStart = true;
 		
 		//defaults //TODO: for now
 		this.output = 'output'; //a directory
@@ -32,7 +31,7 @@ var TimeLapse = {
 		this.parseArgv();
 
 		//start
-		if(this.canStart) this.startTakingPics();
+		this.startTakingPics();
 	},
 	parseArgv : function(){
 		var self = this;
@@ -55,8 +54,6 @@ var TimeLapse = {
 				if(argv[i] === '-dir'){
 					var dir = self.output +'/' + argv[i+1];
 					
-					this.canStart = false;//prevent from starting until callback
-					
 					//check if there is directory
 					fs.exists(dir, function (exists) {
 					  if(exists){
@@ -67,7 +64,6 @@ var TimeLapse = {
 					  	fs.mkdir(dir,function(){
 					  		console.log('directory ' + dir + ' created');
 					  		self.setOptions('directory', dir);
-							self.startTakingPics();
 					  	});
 					  }
 					});
