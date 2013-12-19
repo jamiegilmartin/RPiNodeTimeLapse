@@ -144,8 +144,8 @@ var TimeLapse = {
 		
 		terminal.stdin.write(command+'\n');
 		
+		terminal.stdin.end();
 		console.log('compiling video complete');
-		terminal.end();
 	},
 	help : function(){
 		var help = "";
