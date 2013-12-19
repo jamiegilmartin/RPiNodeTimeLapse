@@ -104,10 +104,10 @@ var TimeLapse = {
 		}else{
 			console.log('reached the max');
 			takingPics = false;
-			//clearTimeout(this.timer);//process keeps running if you don't clear
+			clearTimeout(this.timer);//process keeps running if you don't clear
 			terminal.stdin.end();
 			
-			this.createFileList();
+			this.createFileList(); //breaks
 		}
 
 		this.increment += 1;
