@@ -134,8 +134,18 @@ var TimeLapse = {
 		terminal.stdin.write(command1+'\n');
 		terminal.stdin.write(command2+'\n');
 		
-		terminal.stdin.end();
 		
+		this.compileVideo();
+	},
+	compileVideo : function(){
+		console.log('compiling video');
+		
+		var command = 'mencoder -nosound -ovc lavc -lavcopts vcodec=mpeg4:aspect=16/9:vbitrate=8000000 -vf scale=1920:1080 -o video.avi -mf type=jpeg:fps=24 mf://@stills.txt';
+		
+		terminal.stdin.write(command+'\n');
+		
+		console.log('compiling video complete');
+		terminal.end();
 	},
 	help : function(){
 		var help = "";
