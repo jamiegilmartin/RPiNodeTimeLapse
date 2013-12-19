@@ -28,6 +28,10 @@ var TimeLapse = {
 		//TODO: command for amount of time, new Date thing
 
 		this.parseArgv();
+
+		//start
+		if(this.canStart)
+		this.start();
 	},
 	parseArgv : function(){
 		var self = this;
@@ -42,10 +46,16 @@ var TimeLapse = {
 				if(argv[i] === '-delay'){
 					this.setOptions('delay',argv[i+1]);
 				}
-				
+				//set maxPics
+				if(argv[i] === '-max'){
+					this.setOptions('maxPics',argv[i+1]);
+				}
 				//set directory
 				if(argv[i] === '-dir'){
-					var dir = self.output +'/' + argv[i+1]
+					var dir = self.output +'/' + argv[i+1];
+					
+					this.canStart = false;//prevent from starting until callback
+					
 					//check if there is directory
 					fs.exists(dir, function (exists) {
 					  if(exists){
@@ -56,14 +66,10 @@ var TimeLapse = {
 					  	fs.mkdir(dir,function(){
 					  		console.log('directory ' + dir + ' created');
 					  		self.setOptions('directory', dir);
+							self.start();
 					  	});
 					  }
 					});
-				}
-				
-				//set maxPics
-				if(argv[i] === '-max'){
-					this.setOptions('maxPics',argv[i+1]);
 				}
 			}
 		}
@@ -72,18 +78,20 @@ var TimeLapse = {
 		this[param] = value;
 		console.log('set', param, this[param]);
 
-		//start
-		this.start();
 	},
 	start : function(){
 		var self = this;
 		var takingPics = true;
+		
 		function loop(){
 			self.takePic();
 			if(takingPics)
 			self.timer = setTimeout(loop, self.delay);
 		}
 		this.timer = setTimeout(loop, this.delay);
+		
+		//first pic
+		this.takePic();
 	},
 	takePic : function(){
 		var date = new Date();
@@ -94,13 +102,13 @@ var TimeLapse = {
 			console.log('take pic',terminal.pid,this.increment,command)
 
 			//command
-			terminal.stdin.write(command+'\n');
+			//terminal.stdin.write(command+'\n');
 
 		}else{
 			console.log('reached the max');
 			takingPics = false;
-			clearTimeout(this.timer);//process keeps running if you don't clear
-			//terminal.stdin.end();
+			//clearTimeout(this.timer);//process keeps running if you don't clear
+			terminal.stdin.end();
 			
 			this.createFileList();
 		}
