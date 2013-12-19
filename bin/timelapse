@@ -62,7 +62,7 @@ var TimeLapse = {
 				}
 				
 				//set maxPics
-				if(argv[i] === '-max_number_of_pics'){
+				if(argv[i] === '-max'){
 					this.setOptions('maxPics',argv[i+1]);
 				}
 			}
@@ -77,8 +77,10 @@ var TimeLapse = {
 	},
 	start : function(){
 		var self = this;
+		var takingPics = true;
 		function loop(){
 			self.takePic();
+			if(takingPics)
 			self.timer = setTimeout(loop, self.delay);
 		}
 		this.timer = setTimeout(loop, this.delay);
@@ -96,9 +98,11 @@ var TimeLapse = {
 
 		}else{
 			console.log('reached the max');
+			takingPics = false;
 			clearTimeout(this.timer);//process keeps running if you don't clear
 			//terminal.stdin.end();
-			terminal.end();
+			
+			this.createFileList();
 		}
 
 		this.increment += 1;
@@ -121,12 +125,24 @@ var TimeLapse = {
 		});
 		
 	},
+	createFileList : function(){
+		console.log('creating file list at '+this.directory);
+		var command1 = 'cd '+this.directory;
+		var command2 = "ls -t >  stills.txt";
+		
+		//command
+		terminal.stdin.write(command1+'\n');
+		terminal.stdin.write(command2+'\n');
+		
+		terminal.stdin.end();
+		
+	},
 	help : function(){
 		var help = "";
 		help += "commands:\n";
 		help += "-delay (sets delay, so type -delay 5000 or something)\n";
 		help += "-dir (sets directory, so type dir_name to create place where you want your stills)\n";
-		help += "-max_number_of_pics (sets maximum number of pics, so type max_number_of_pics to set a limit otherwise it's 1000)\n";
+		help += "-max (sets maximum number of pics, so type max_number_of_pics to set a limit otherwise it's 1000)\n";
 		console.log(help);
 		
 		terminal.kill();
