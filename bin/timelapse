@@ -20,7 +20,7 @@ var TimeLapse = {
 		//defaults //TODO: for now
 		this.output = 'output'; //a directory
 		this.directory = this.output + '/stills';
-		this.delay = 5000;
+		this.delay = 8000;
 		this.increment = 0;
 		this.maxPics = 1000;
 		this.timer = null; 
@@ -84,9 +84,9 @@ var TimeLapse = {
 		this.timer = setTimeout(loop, this.delay);
 	},
 	takePic : function(){
-		var date = new Date(),
-			fileName = "timeLapse-img_"+this.increment +"_date-"+(date.getMonth()+1)+"-"+date.getDate()+"-"+date.getFullYear()+"_"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds()+".jpg",
-			command = "raspistill -o "+this.directory+"/"+fileName;
+		var date = new Date();
+		var fileName = "timeLapse-img_"+this.increment +"_date-"+(date.getMonth()+1)+"-"+date.getDate()+"-"+date.getFullYear()+"_"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds()+".jpg";
+		var command = "raspistill -o "+this.directory+"/"+fileName;
 		
 		if(this.increment < this.maxPics){
 			console.log('take pic',terminal.pid,this.increment,command)
@@ -97,7 +97,8 @@ var TimeLapse = {
 		}else{
 			console.log('reached the max');
 			clearTimeout(this.timer);//process keeps running if you don't clear
-			terminal.stdin.end();
+			//terminal.stdin.end();
+			terminal.end();
 		}
 
 		this.increment += 1;
