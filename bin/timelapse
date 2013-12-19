@@ -77,6 +77,7 @@ var TimeLapse = {
 			}else{
 				
 				function check(){
+					console.log('checking', wait);
 					if(!wait){
 						self.startTakingPics();
 					}else{
