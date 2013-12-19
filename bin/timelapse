@@ -51,7 +51,6 @@ var TimeLapse = {
 				}
 				//set directory
 				if(argv[i] === '-dir'){
-					wait = true;
 					var dir = self.output +'/' + argv[i+1];
 					
 					//check if there is directory
@@ -60,6 +59,7 @@ var TimeLapse = {
 					  	//TODO : are you sure you want to add to: read dir
 					  	self.setOptions('directory', dir);
 					  }else{
+	  					wait = true;//prevent pic taking from starting before callback
 					  	//make it
 					  	fs.mkdir(dir,function(){
 					  		console.log('directory ' + dir + ' created');
@@ -124,7 +124,7 @@ var TimeLapse = {
 			//clearTimeout(this.timer);//process keeps running if you don't clear
 			terminal.stdin.end();
 			
-			this.createFileList(); //breaks
+			//this.createFileList(); //breaks
 		}
 
 		this.increment += 1;
