@@ -24,17 +24,16 @@ var TimeLapse = {
 		this.delay = 8000;
 		this.increment = 0;
 		this.maxPics = 1000;
-		this.timer = null; 
 
 		//TODO: command for amount of time, new Date thing
 
 		this.parseArgv();
 
-		//start
-		this.startTakingPics();
 	},
 	parseArgv : function(){
 		var self = this;
+		var wait = false;
+		
 		//parse args
 		if(argv[0] === "--help" || argv[0] === "-h"){
 			this.help();
@@ -52,6 +51,7 @@ var TimeLapse = {
 				}
 				//set directory
 				if(argv[i] === '-dir'){
+					wait = true;
 					var dir = self.output +'/' + argv[i+1];
 					
 					//check if there is directory
@@ -64,10 +64,26 @@ var TimeLapse = {
 					  	fs.mkdir(dir,function(){
 					  		console.log('directory ' + dir + ' created');
 					  		self.setOptions('directory', dir);
+							wait = false;
 					  	});
 					  }
 					});
 				}
+			}
+			
+			//start
+			if(!wait){
+				this.startTakingPics();
+			}else{
+				
+				function check(){
+					if(!wait){
+						self.startTakingPics();
+					}else{
+						setTimeout(check, 500);
+					}
+				}
+				setTimeout(check, 500);
 			}
 		}
 	},
@@ -83,9 +99,9 @@ var TimeLapse = {
 		function loop(){
 			self.takePic();
 			if(takingPics)
-			self.timer = setTimeout(loop, self.delay);
+			setTimeout(loop, self.delay);
 		}
-		this.timer = setTimeout(loop, this.delay);
+		setTimeout(loop, this.delay);
 		
 		//first pic
 		this.takePic();
@@ -104,7 +120,7 @@ var TimeLapse = {
 		}else{
 			console.log('reached the max');
 			takingPics = false;
-			clearTimeout(this.timer);//process keeps running if you don't clear
+			//clearTimeout(this.timer);//process keeps running if you don't clear
 			terminal.stdin.end();
 			
 			this.createFileList(); //breaks
