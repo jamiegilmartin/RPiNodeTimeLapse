@@ -102,7 +102,7 @@ var TimeLapse = {
 			console.log('take pic',terminal.pid,this.increment,command)
 
 			//command
-			//terminal.stdin.write(command+'\n');
+			terminal.stdin.write(command+'\n');
 
 		}else{
 			console.log('reached the max');
