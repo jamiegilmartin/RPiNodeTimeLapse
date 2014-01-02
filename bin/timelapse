@@ -10,7 +10,7 @@ var TimeLapse = {
 		//defaults //TODO: for now
 		this.output = 'output';
 		this.directory = this.output + '/stills';
-		this.delay = 5000;
+		this.delay = 10000;
 		this.increment = 0;
 		this.maxPics = 1000; //TODO: command
 		this.timer = null; 
