@@ -1,14 +1,4 @@
 #!/usr/bin/env node
-
-/**
- * Rasperrypi Node Time Lapse script
- * @author jamiegilmartin@gmail.com
- * @see http://www.netmagazine.com/tutorials/build-command-line-app-nodejs
- *
- *
- *
- */
-
 var terminal = require('child_process').spawn('bash');
 var fs = require('fs');
 var argv = process.argv.slice(2);
@@ -17,100 +7,68 @@ var argv = process.argv.slice(2);
 var TimeLapse = {
 	init : function(){
 		var self = this;
-		
 		//defaults //TODO: for now
-		this.output = 'output'; //a directory
+		this.output = 'output';
 		this.directory = this.output + '/stills';
-		this.delay = 8000;
+		this.delay = 5000;
 		this.increment = 0;
-		this.maxPics = 1000;
+		this.maxPics = 1000; //TODO: command
+		this.timer = null; 
 
 		//TODO: command for amount of time, new Date thing
 
 		this.parseArgv();
-
 	},
 	parseArgv : function(){
 		var self = this;
-		var wait = false;
-		
 		//parse args
 		if(argv[0] === "--help" || argv[0] === "-h"){
 			this.help();
 		}else{
 			//loop through args and parse
 			for(var i=0;i<argv.length;i++){
-				
 				//set delay
 				if(argv[i] === '-delay'){
-					this.setOptions('delay',argv[i+1]);
-				}
-				//set maxPics
-				if(argv[i] === '-max'){
-					this.setOptions('maxPics',argv[i+1]);
+					this.set('delay',argv[i+1]);
 				}
 				//set directory
 				if(argv[i] === '-dir'){
-					var dir = self.output +'/' + argv[i+1];
-					
+					var dir = self.output +'/' + argv[i+1]
 					//check if there is directory
 					fs.exists(dir, function (exists) {
 					  if(exists){
 					  	//TODO : are you sure you want to add to: read dir
-					  	self.setOptions('directory', dir);
+					  	self.set('directory', dir);
 					  }else{
-	  					wait = true;//prevent pic taking from starting before callback
 					  	//make it
 					  	fs.mkdir(dir,function(){
 					  		console.log('directory ' + dir + ' created');
-					  		self.setOptions('directory', dir);
-							wait = false;
+					  		self.set('directory', dir);
 					  	});
 					  }
 					});
+					
 				}
-			}
-			
-			//start
-			if(!wait){
-				this.startTakingPics();
-			}else{
-				
-				function check(){
-					console.log('checking', wait);
-					if(!wait){
-						self.startTakingPics();
-					}else{
-						setTimeout(check, 500);
-					}
-				}
-				setTimeout(check, 500);
 			}
 		}
 	},
-	setOptions : function(param, value){
+	set : function(param, value){
 		this[param] = value;
 		console.log('set', param, this[param]);
 
+		//start
+		this.start();
 	},
-	startTakingPics : function(){
+	start : function(){
 		var self = this;
-		var takingPics = true;
-		
-		function loop(){
+		this.timer = setInterval(function(){
 			self.takePic();
-			if(takingPics)
-			setTimeout(loop, self.delay);
-		}
-		setTimeout(loop, this.delay);
-		
-		//first pic
-		this.takePic();
+		},this.delay);
 	},
 	takePic : function(){
-		var date = new Date();
-		var fileName = "timeLapse-img_"+this.increment +"_date-"+(date.getMonth()+1)+"-"+date.getDate()+"-"+date.getFullYear()+"_"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds()+".jpg";
-		var command = "raspistill -o "+this.directory+"/"+fileName;
+		var date = new Date(),
+			fileName = "timeLapse-img_"+this.increment +"_date-"+(date.getMonth()+1)+"-"+date.getDate()+"-"+date.getFullYear()+"_"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds()+".jpg",
+			command = "raspistill -o "+this.directory+"/"+fileName;
 		
 		if(this.increment < this.maxPics){
 			console.log('take pic',terminal.pid,this.increment,command)
@@ -120,18 +78,14 @@ var TimeLapse = {
 
 		}else{
 			console.log('reached the max');
-			takingPics = false;
-			//clearTimeout(this.timer);//process keeps running if you don't clear
+			clearInterval(this.timer);//process keeps running if you don't clear
 			terminal.stdin.end();
-			
-			//this.createFileList(); //breaks
 		}
 
 		this.increment += 1;
 		
 	},
 	//if you want to see what's in a dir
-	//@deprecated ? not used yet
 	readDir : function( dir ){
 		function action(ac){
 			console.log(ac);
@@ -145,39 +99,13 @@ var TimeLapse = {
 				console.log(file)
 			});
 		});
-		
-	},
-	createFileList : function(){
-		console.log('creating file list at '+this.directory);
-		var command1 = 'cd '+this.directory;
-		var command2 = "ls -t >  stills.txt";
-		
-		//command
-		terminal.stdin.write(command1+'\n');
-		terminal.stdin.write(command2+'\n');
-		
-		
-		this.compileVideo();
-	},
-	compileVideo : function(){
-		console.log('compiling video');
-		
-		var command = 'mencoder -nosound -ovc lavc -lavcopts vcodec=mpeg4:aspect=16/9:vbitrate=8000000 -vf scale=1920:1080 -o video.avi -mf type=jpeg:fps=24 mf://@stills.txt';
-		
-		terminal.stdin.write(command+'\n');
-		
-		terminal.stdin.end();
-		console.log('compiling video complete');
 	},
 	help : function(){
-		var help = "";
+		var help = "";//TODO "hi, I copied this from http://www.netmagazine.com/tutorials/build-command-line-app-nodejs"
 		help += "commands:\n";
 		help += "-delay (sets delay, so type -delay 5000 or something)\n";
-		help += "-dir (sets directory, so type dir_name to create place where you want your stills)\n";
-		help += "-max (sets maximum number of pics, so type max_number_of_pics to set a limit otherwise it's 1000)\n";
+		help += "-dir (sets directory, so type dir_name to create place where you want your stills\n";
 		console.log(help);
-		
-		terminal.kill();
 	}
 };
 
